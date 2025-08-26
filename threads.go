@@ -4,7 +4,9 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"fmt"
 	"log"
+	"net/http"
 
 	"telry.io/client/types"
 )
@@ -80,7 +82,8 @@ func (c *Client) NewTemplateMessage(ctx context.Context, threadID string, templa
 }
 
 func (c *Client) GetMessages(ctx context.Context, threadID string, query types.Query) (types.MessagesResponse, error) {
-	url, err := c.prepareUrl("/threads/"+threadID+"/messages", query)
+	threadPath := fmt.Sprintf("/threads/%s/messages", threadID)
+	url, err := c.prepareUrl(threadPath, query)
 	if err != nil {
 		return types.MessagesResponse{}, err
 	}
@@ -101,4 +104,18 @@ func (c *Client) Welcome(ctx context.Context, name string, phone string) (types.
 	b, _ := json.Marshal(body)
 
 	return post[types.WelcomeMessage](ctx, url, bytes.NewReader(b), newAuthorizationHeader(c.token))
+}
+
+func (c *Client) MarkRead(ctx context.Context, threadID string) error {
+	threadPath := fmt.Sprintf("/threads/%s/mark-read", threadID)
+	url, err := c.prepareUrl(threadPath, types.Query{})
+	if err != nil {
+		return nil
+	}
+
+	if _, err := do[any](ctx, http.MethodPost, url, nil, newAuthorizationHeader(c.token)); err != nil {
+		return err
+	}
+
+	return nil
 }
