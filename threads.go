@@ -88,7 +88,7 @@ func (c *Client) GetMessages(ctx context.Context, threadID string, query types.Q
 	return get[types.MessagesResponse](ctx, url, newAuthorizationHeader(c.token))
 }
 
-func (c *Client) Welcome(ctx context.Context, name string, phone string) {
+func (c *Client) Welcome(ctx context.Context, name string, phone string) (types.WelcomeMessage, error) {
 	url, err := c.prepareUrl("/welcome", types.Query{})
 	if err != nil {
 		panic(err)
@@ -100,10 +100,5 @@ func (c *Client) Welcome(ctx context.Context, name string, phone string) {
 
 	b, _ := json.Marshal(body)
 
-	res, err := post[types.WelcomeMessage](ctx, url, bytes.NewReader(b), newAuthorizationHeader(c.token))
-	if err != nil {
-		panic(err)
-	}
-
-	log.Printf("R: %v", res)
+	return post[types.WelcomeMessage](ctx, url, bytes.NewReader(b), newAuthorizationHeader(c.token))
 }
