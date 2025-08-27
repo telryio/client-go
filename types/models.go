@@ -41,8 +41,8 @@ type Message struct {
 }
 
 type OtpRequest struct {
-	Recipient string `json:"recipient"`
-	Code      string `json:"code,omitempty"`
+	Phone string `json:"phone"`
+	Code  string `json:"code,omitempty"`
 }
 
 type OtpResponse struct {

@@ -9,20 +9,20 @@ import (
 	"telry.io/client/types"
 )
 
-func (c *Client) CreateOTP(ctx context.Context, recipient string) (types.OtpResponse, error) {
+func (c *Client) CreateOTP(ctx context.Context, phone string) (types.OtpResponse, error) {
 	url := fmt.Sprintf("%s/organizations/%s/otp", c.url, c.organization)
 	b, _ := json.Marshal(types.OtpRequest{
-		Recipient: recipient,
+		Phone: phone,
 	})
 
 	return post[types.OtpResponse](ctx, url, bytes.NewReader(b), newAuthorizationHeader(c.token))
 }
 
-func (c *Client) VerifyOTP(ctx context.Context, recipient string, code string) (types.OtpResponse, error) {
+func (c *Client) VerifyOTP(ctx context.Context, phone string, code string) (types.OtpResponse, error) {
 	url := fmt.Sprintf("%s/organizations/%s/otp/verify", c.url, c.organization)
 	b, _ := json.Marshal(types.OtpRequest{
-		Recipient: recipient,
-		Code:      code,
+		Phone: phone,
+		Code:  code,
 	})
 
 	return post[types.OtpResponse](ctx, url, bytes.NewReader(b), newAuthorizationHeader(c.token))
